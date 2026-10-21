@@ -20,6 +20,8 @@ const csp = [
 
 export default defineConfig({
   base: '/fsd-workspace/',
+  // Ship every asset as a file: the CSP allows fonts and images from 'self', not data: URLs.
+  build: { assetsInlineLimit: 0 },
   plugins: [
     react(),
     tailwindcss(),
