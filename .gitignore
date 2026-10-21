@@ -1,0 +1,15 @@
+# Client data never reaches this public repo.
+supabase/seed.sql
+supabase/.temp/
+.impeccable/mocks/
+.impeccable/review/
+.impeccable/build/
+.impeccable/config.local.json
+
+node_modules/
+dist/
+.env*
+.DS_Store
+
+# Local design-tool cache
+.impeccable/hook.cache.json
