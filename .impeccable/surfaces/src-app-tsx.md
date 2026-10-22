@@ -7,7 +7,7 @@ related_targets: ["src/pages/Today.tsx"]
 
 ## Scope
 
-App shell and Today, the first surface. Mode: operate. Board, client hub, plans and time inherit this world.
+Whole app (shell, Today, Board, task dialog, clients, plans, time). Mode: operate. Redesign 22 Oct 2026: the user rejected "Between the Flags" once built (colours, fonts, layout and theme) and chose Job Docket from full-fidelity mockups.
 
 ## Audience and job
 
@@ -15,24 +15,19 @@ The agency lead approves or sends back work from a phone or a laptop in under a 
 
 ## Constraints
 
-Public repo: no client data in source or committed captures. Must not resemble the reference tool it was modelled on. WCAG 2.2 AA in light and dark. Standard web controls only.
+Public repo: no client data in source or committed captures. WCAG 2.2 AA in light and dark. Standard web controls only.
 
 ## Direction contract
 
-THESIS: Nothing goes live outside the flags. Approval is the red-over-yellow patrol flag and every account reads like the morning surf report against its own target. Refuses the grey sidebar, white cards, one indigo accent and KPI tiles.
+THESIS: Every task is a job docket that cannot go live until the right initials are in its box. Refuses the grey sidebar, white cards and one indigo accent of the category, and the beach theme it replaced.
 
-OWN-WORLD: Ocean-teal rail with white type, patrol-board white work surface on a cool sea-salt ground, deep-water ink. Flag red and flag yellow reserved for the flag mark and hazard states. Flat colour only; depth from 1px rules and solid fills. Sofia Sans for UI, Sofia Sans Extra Condensed caps for headings and the wordmark; three sizes in the shell; tabular figures. Status marks are shapes: empty pole waiting, raised flag approved, hazard diamond overdue or alert.
+OWN-WORLD: Carbonless copy stock. Carbon-blue ink and rail (#1f2b5c), white dockets on a cool grey ground, canary for waiting for initials, pink for on hold, blue for in progress, a red rubber stamp for Approved and for overdue. Work Sans throughout; tracked small caps for labels; square corners; hairline rules and a dashed rule under each docket number.
 
-STORY: The lead sees what is waiting for the flags and raises or returns each one in seconds. The account manager sees what came back, what is cleared to action, what is late, and the conditions on every account.
+STORY: The lead sees dockets waiting for initials and approves or returns each in seconds. The account manager sees what came back, what is stamped and ready to go live, what is late, and the checks on every account.
 
-FIRST VIEWPORT: 248px teal rail: wordmark with flag mark, nav, grouped client switcher with open-work bars. 52px white top bar: date, Sydney and Manila clocks, search, New task. Main: TODAY in extra-condensed caps with a one-line count; "Waiting for the flags" rows with Approve (the primary action) and Send back; then Sent back, Cleared to action, Overdue, This week. Right 380px Conditions column: rating word, yesterday vs 60-day, 30-day bars with yesterday marked. Phone: top bar with drawer; the waiting queue first, full-width Approve.
+FIRST VIEWPORT: Navy rail (wordmark, "Traffic", nav, grouped clients with open counts). Top bar on the ground: date, Sydney and Manila clocks, search, red "+ New docket". Main: "Traffic sheet" at 44px with the counts; "Waiting for sign-off" as a 3-column grid of dockets, each with Built / Sent / Approved initials boxes and Approve / Send back; below, white panels for Sent back, Approved, Overdue, This week, Coming up; right 320px Account checks panel.
 
-FORM: Bondi surf report and lifesaving patrol flags; grounded candidate 4 of 7, dealt on re-roll 1. seed:761d62b836cb7054
-RAISED (Timetable Slides): three type sizes; rank from weight, case and rules.
-RAISED (Character Catalog): every client page keeps the same furniture in the same order.
-RAISED (Acetate Manual): each client in the switcher carries a bar proportional to its open work.
-RAISED (Guide Map): flat colour only, no shadows, gradients or glass.
-RAISED (Emission Rail): state never relies on colour alone.
-SIGNATURE: Approve raises the flag: the pole mark rises into the red-over-yellow flag in 200ms and the row settles into Cleared to action. Motion only on state change; reduced motion swaps instantly.
+FORM: Pre-web agency job docket and traffic sheet; user-pinned from the first hand's pick card after a full-fidelity mockup comparison. seed:761d62b836cb7054
+SIGNATURE: Approve fills the last initials box and the red APPROVED stamp presses onto the docket (220ms scale-in); reduced motion shows it instantly.
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance

@@ -7,6 +7,10 @@ import { PRIORITIES, ref, STATUSES, TYPES } from '../lib/model'
 import { Avatar, overdue, StatusMark } from '../components/bits'
 import { Hazard, Plus } from '../components/Icons'
 
+// Copy colours on the docket edge: canary waiting for initials, pink on hold, blue in progress.
+const STRIP: Record<string, string> = {
+  todo: 'border-t-rule', in_progress: 'border-t-blue', review: 'border-t-canary', approved: 'border-t-red', on_hold: 'border-t-pink', done: 'border-t-rule',
+}
 const RANK: Record<string, number> = { urgent: 0, high: 1, normal: 2, low: 3 }
 // Within a column: priority first, then the nearest due date.
 const order = (a: Task, b: Task) => RANK[a.priority] - RANK[b.priority] || (a.due_date ?? '9999').localeCompare(b.due_date ?? '9999') || b.ref - a.ref
@@ -56,7 +60,7 @@ export function Board() {
               onDragOver={(e) => { e.preventDefault(); setOver(status) }}
               onDragLeave={() => setOver((s) => (s === status ? null : s))}
               onDrop={(e) => drop(status, e.dataTransfer.getData('text/plain'))}
-              className={`w-[272px] shrink-0 snap-start ${over === status ? 'bg-board outline-2 outline-dashed outline-teal' : ''}`}>
+              className={`w-[272px] shrink-0 snap-start ${over === status ? 'bg-board outline-2 outline-dashed outline-ink' : ''}`}>
               <header className="h-sec mt-0">
                 <h2 className="flex items-center gap-2"><StatusMark status={status} />{label}</h2>
                 <span className="count num">{col.length}</span>
@@ -85,7 +89,7 @@ function Card({ task }: { task: Task }) {
   const late = overdue(task)
   return (
     <article draggable onDragStart={(e) => { e.dataTransfer.setData('text/plain', task.id); e.dataTransfer.effectAllowed = 'move' }}
-      className="group sheet cursor-grab p-3 hover:border-ink active:cursor-grabbing">
+      className={`group panel cursor-grab border-t-4 p-3 hover:border-ink active:cursor-grabbing ${STRIP[task.status]}`}>
       <button onClick={() => open(task.ref)} className="block w-full text-left focus-visible:outline-offset-4">
         <span className="flex items-center justify-between gap-2">
           <span className="ref">{ref(task.ref)}</span>
@@ -106,7 +110,7 @@ function Card({ task }: { task: Task }) {
           <span className="ml-auto"><Avatar name={person(task.assignee_id)} /></span>
         </span>
         {steps.length > 0 && (
-          <span className="mt-2 block h-[3px] bg-rule"><span className="block h-[3px] bg-teal" style={{ width: `${(done / steps.length) * 100}%` }} /></span>
+          <span className="mt-2 block h-[3px] bg-rule"><span className="block h-[3px] bg-ink" style={{ width: `${(done / steps.length) * 100}%` }} /></span>
         )}
       </button>
     </article>

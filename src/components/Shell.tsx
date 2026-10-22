@@ -5,7 +5,7 @@ import { run, useData, useLookups, useScope, useTaskLink, type Client } from '..
 import { clock, longDate, today } from '../lib/format'
 import { ref } from '../lib/model'
 import { Toasts } from './bits'
-import { Close, Flag, Menu, Moon, Plus, Search, Sun } from './Icons'
+import { Box, Close, Menu, Moon, Plus, Search, Sun } from './Icons'
 import { TaskDialog } from './TaskDialog'
 
 const SECTIONS = ['board', 'plans', 'time'] as const
@@ -23,12 +23,12 @@ export function Shell() {
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[248px_minmax(0,1fr)]">
       <aside className="sticky top-0 hidden h-dvh lg:block"><Rail /></aside>
-      <dialog ref={drawer} aria-label="Menu" className="m-0 h-dvh max-h-none w-[280px] max-w-[85vw] bg-teal p-0">
+      <dialog ref={drawer} aria-label="Menu" className="m-0 h-dvh max-h-none w-[280px] max-w-[85vw] bg-rail p-0">
         <Rail onClose={() => drawer.current?.close()} />
       </dialog>
       <div className="min-w-0">
         <TopBar onMenu={() => drawer.current?.showModal()} />
-        <main className="mx-auto max-w-[1360px] px-4 pb-20 pt-6 lg:px-8"><Outlet /></main>
+        <main className="mx-auto max-w-[1360px] px-4 pb-20 pt-7 lg:px-8"><Outlet /></main>
       </div>
       {current && <TaskDialog key={current} />}
       <Toasts />
@@ -49,8 +49,6 @@ function Rail({ onClose }: { onClose?: () => void }) {
     for (const c of clients) if (c.parent_id) m.set(c.parent_id, (m.get(c.parent_id) ?? 0) + (m.get(c.id) ?? 0))
     return m
   }, [clients, tasks])
-  const max = Math.max(1, ...clients.filter((c) => !c.parent_id).map((c) => open.get(c.id) ?? 0))
-
   const groups = clients.filter((c) => clients.some((x) => x.parent_id === c.id))
   const solo = clients.filter((c) => !c.parent_id && !groups.includes(c))
   const live = solo.filter((c) => c.status === 'active')
@@ -67,35 +65,33 @@ function Rail({ onClose }: { onClose?: () => void }) {
   const item = (c: Client, indent = false) => (
     <li key={c.id}>
       <Link to={to(c)} aria-current={scoped?.id === c.id ? 'page' : undefined}
-        className={`grid grid-cols-[1fr_36px] items-center gap-2 rounded-sm py-1 pr-2 ${indent ? 'pl-5' : 'pl-2'} hover:bg-teal-deep aria-[current=page]:bg-teal-deep aria-[current=page]:font-bold`}>
+        className={`flex items-center justify-between gap-2 py-1 pr-2 ${indent ? 'pl-4' : 'pl-2'} hover:bg-rail-deep aria-[current=page]:bg-board aria-[current=page]:font-semibold aria-[current=page]:text-ink`}>
         <span className="truncate">{c.name}</span>
-        <span className="h-[3px] bg-on-teal/25" aria-label={`${open.get(c.id) ?? 0} open`}>
-          <span className="block h-[3px] bg-on-teal" style={{ width: `${((open.get(c.id) ?? 0) / max) * 100}%` }} />
-        </span>
+        <span className="num text-s opacity-75">{open.get(c.id) ?? 0}</span>
       </Link>
     </li>
   )
-  const label = (text: string) => <li className="px-2 pb-1 pt-4 text-s text-on-teal-mid">{text}</li>
+  const label = (text: string) => <li className="px-2 pb-1 pt-4 text-[11px] uppercase tracking-[0.12em] text-on-rail-mid">{text}</li>
 
   return (
-    <nav aria-label="Main" className="flex h-full flex-col bg-teal text-on-teal [&_:focus-visible]:outline-flag-yellow">
-      <div className="flex items-start justify-between border-b border-on-teal/20 px-5 pb-4 pt-5">
+    <nav aria-label="Main" className="flex h-full flex-col bg-rail text-on-rail [&_:focus-visible]:outline-canary">
+      <div className="flex items-start justify-between px-5 pb-2 pt-5">
         <Link to="/" className="block">
-          <span className="flex items-end gap-1.5"><span className="text-on-teal"><Flag size={30} /></span><span className="display text-xl">FSD</span></span>
-          <span className="mt-1 block text-s uppercase tracking-[0.22em] text-on-teal-mid">WorkSpace</span>
+          <span className="block text-l font-extrabold tracking-[-0.02em]">FSD WorkSpace</span>
+          <span className="block text-[11px] uppercase tracking-[0.16em] text-on-rail-mid">Traffic</span>
         </Link>
-        {onClose && <button className="btn btn-quiet text-on-teal" onClick={onClose} aria-label="Close menu"><Close /></button>}
+        {onClose && <button className="btn btn-quiet -mr-2 text-on-rail" onClick={onClose} aria-label="Close menu"><Close /></button>}
       </div>
-      <ul className="border-b border-on-teal/20 px-3 py-2">
+      <ul className="px-3 py-3">
         {nav.map((n) => (
           <li key={n.label}>
-            <NavLink to={n.to} end={n.end} className="block rounded-sm px-2 py-1.5 font-semibold hover:bg-teal-deep aria-[current=page]:bg-board aria-[current=page]:text-ink">{n.label}</NavLink>
+            <NavLink to={n.to} end={n.end} className="block px-2 py-1.5 font-semibold hover:bg-rail-deep aria-[current=page]:bg-board aria-[current=page]:text-ink">{n.label}</NavLink>
           </li>
         ))}
       </ul>
-      <ul className="flex-1 overflow-y-auto px-3 pb-4 [scrollbar-color:var(--on-teal-mid)_transparent]">
-        <li className="pt-3">
-          <Link to={to()} aria-current={!scoped ? 'page' : undefined} className="block rounded-sm px-2 py-1 hover:bg-teal-deep aria-[current=page]:bg-teal-deep aria-[current=page]:font-bold">All clients</Link>
+      <ul className="flex-1 overflow-y-auto px-3 pb-4 [scrollbar-color:var(--rail-deep)_transparent]">
+        <li>
+          <Link to={to()} aria-current={!scoped ? 'page' : undefined} className="block px-2 py-1 hover:bg-rail-deep aria-[current=page]:font-semibold aria-[current=page]:underline">All clients</Link>
         </li>
         {groups.map((g) => [label(g.name), item(g), ...clients.filter((c) => c.parent_id === g.id).map((c) => item(c, true))])}
         {label('Independent')}
@@ -131,14 +127,14 @@ function TopBar({ onMenu }: { onMenu: () => void }) {
   })
 
   return (
-    <header className="sticky top-0 z-30 flex h-[52px] items-center gap-3 border-b border-rule bg-board px-4 lg:px-8">
+    <header className="sticky top-0 z-30 flex h-[60px] items-center gap-3 border-b border-rule bg-ground px-4 lg:px-8">
       <button className="btn btn-quiet -ml-2 lg:hidden" onClick={onMenu} aria-label="Open menu"><Menu /></button>
       <div className="min-w-0">
         <p className="truncate font-semibold">{longDate(today())}</p>
         <p className="meta num truncate">Sydney {times.syd} · Manila {times.mnl}</p>
       </div>
       <TaskSearch />
-      <button className="btn btn-ink" onClick={newTask} aria-keyshortcuts="n"><Plus /><span className="hidden sm:inline">New task</span></button>
+      <button className="btn btn-stamp" onClick={newTask} aria-keyshortcuts="n"><Plus /><span className="hidden sm:inline">New docket</span></button>
     </header>
   )
 }
@@ -161,7 +157,7 @@ function TaskSearch() {
         onChange={(e) => setQ(e.target.value)}
         onKeyDown={(e) => { if (e.key === 'Enter' && hits[0]) pick(hits[0].ref); if (e.key === 'Escape') setQ('') }} />
       {needle && (
-        <ul className="sheet absolute inset-x-0 top-10 z-40 max-h-96 overflow-y-auto">
+        <ul className="panel absolute inset-x-0 top-10 z-40 max-h-96 overflow-y-auto">
           {hits.length === 0 && <li className="meta px-3 py-2">No task matches “{q}”.</li>}
           {hits.map((t) => (
             <li key={t.id}>
@@ -190,12 +186,12 @@ function Account() {
     setDark(!dark)
   }
   return (
-    <details className="border-t border-on-teal/20 px-3 py-3">
-      <summary className="flex cursor-pointer list-none items-center justify-between rounded-sm px-2 py-1 hover:bg-teal-deep">
+    <details className="border-t border-on-rail/15 px-3 py-3">
+      <summary className="flex cursor-pointer list-none items-center justify-between px-2 py-1 hover:bg-rail-deep">
         <span className="truncate font-semibold">{me?.full_name}</span>
-        <span className="text-s text-on-teal-mid">{me?.role === 'admin' ? 'Admin' : 'Team'}</span>
+        <span className="text-s text-on-rail-mid">{me?.role === 'admin' ? 'Admin' : 'Team'}</span>
       </summary>
-      <div className="mt-2 space-y-3 rounded-sm bg-board p-3 text-ink">
+      <div className="mt-2 space-y-3 bg-board p-3 text-ink">
         <form onSubmit={async (e) => { e.preventDefault(); if (await run(supabase.from('profiles').update({ full_name: name.trim() }).eq('id', me!.id), 'Name saved')) reload() }}>
           <label className="label" htmlFor="me-name">Your name</label>
           <div className="flex gap-2"><input id="me-name" className="field" value={name} maxLength={120} onChange={(e) => setName(e.target.value)} /><button className="btn">Save</button></div>
@@ -216,10 +212,10 @@ function Account() {
 function NoAccess() {
   const { session } = useData()
   return (
-    <div className="grid min-h-dvh place-items-center bg-teal p-4 text-on-teal">
+    <div className="grid min-h-dvh place-items-center bg-rail p-4 text-on-rail">
       <div className="max-w-md">
-        <Flag raised={false} size={40} />
-        <h1 className="display mt-3 text-xl">Not cleared yet</h1>
+        <Box size={40} />
+        <h1 className="display mt-3 text-xl">Waiting for initials</h1>
         <p className="mt-3">You're signed in as {session.user.email}, but this account hasn't been given access. Ask Jeremy to switch it on.</p>
         <button className="btn mt-5" onClick={() => supabase.auth.signOut()}>Sign out</button>
       </div>

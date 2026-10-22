@@ -103,7 +103,7 @@ function Snapshot({ client }: { client: Client }) {
             currency: currency.toUpperCase(), website: website || null, parent_id: parent_id || null, services: f.services,
           }).eq('id', client.id), 'Client saved')) { reload(); dlg.current?.close() }
         }}>
-          <h2 className="display text-m tracking-[0.06em]">Edit {client.name}</h2>
+          <h2 className="text-l font-bold">Edit {client.name}</h2>
           <Input label="Name" value={f.name} onChange={(v) => setF({ ...f, name: v })} required />
           <div className="grid grid-cols-2 gap-3">
             <label><span className="label">Status</span>
@@ -238,7 +238,7 @@ function ContactForm({ client, contact, onDone }: { client: Client; contact?: Co
       <Input label="Phone" value={f.phone} onChange={(v) => setF({ ...f, phone: v })} />
       <Input label="Prefers (Email, Slack, Call / SMS)" value={f.preferred_channel} onChange={(v) => setF({ ...f, preferred_channel: v })} />
       <Input label="Notes" value={f.notes} onChange={(v) => setF({ ...f, notes: v })} />
-      <label className="col-span-2 flex items-center gap-2"><input type="checkbox" className="size-4 accent-[var(--teal)]" checked={f.is_primary} onChange={(e) => setF({ ...f, is_primary: e.target.checked })} />Primary contact</label>
+      <label className="col-span-2 flex items-center gap-2"><input type="checkbox" className="size-4 accent-[var(--ink)]" checked={f.is_primary} onChange={(e) => setF({ ...f, is_primary: e.target.checked })} />Primary contact</label>
       <div className="col-span-2 flex gap-2">
         <button className="btn btn-ink">Save</button><button type="button" className="btn" onClick={onDone}>Cancel</button>
         {contact && <button type="button" className="btn btn-quiet ml-auto" onClick={async () => { if (await run(supabase.from('contacts').delete().eq('id', contact.id), 'Removed')) onDone() }}><Trash size={16} />Remove</button>}
@@ -304,7 +304,7 @@ function RecurringForm({ client, item, onDone }: { client: Client; item?: Recurr
       <label className="col-span-2 md:col-span-4"><span className="label">Steps for each task (lines like "- [ ] Pull the data")</span>
         <textarea className="field min-h-28" value={f.template} maxLength={5000} onChange={(e) => setF({ ...f, template: e.target.value })} />
       </label>
-      <label className="flex items-center gap-2"><input type="checkbox" className="size-4 accent-[var(--teal)]" checked={f.active} onChange={(e) => setF({ ...f, active: e.target.checked })} />Active</label>
+      <label className="flex items-center gap-2"><input type="checkbox" className="size-4 accent-[var(--ink)]" checked={f.active} onChange={(e) => setF({ ...f, active: e.target.checked })} />Active</label>
       <div className="col-span-2 flex gap-2 md:col-span-3">
         <button className="btn btn-ink">Save</button><button type="button" className="btn" onClick={onDone}>Cancel</button>
         {item && <button type="button" className="btn btn-quiet ml-auto" onClick={async () => { if (await run(supabase.from('recurring').delete().eq('id', item.id), 'Removed')) onDone() }}><Trash size={16} />Remove</button>}

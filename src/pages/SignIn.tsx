@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { Flag } from '../components/Icons'
 
 export function SignIn() {
   const [email, setEmail] = useState('')
@@ -9,13 +8,13 @@ export function SignIn() {
   const [busy, setBusy] = useState(false)
 
   return (
-    <main className="grid min-h-dvh place-items-center bg-teal px-4 py-10">
+    <main className="grid min-h-dvh place-items-center bg-rail px-4 py-10">
       <div className="w-full max-w-sm">
-        <div className="mb-6 text-on-teal">
-          <span className="flex items-end gap-2"><Flag size={40} /><span className="display text-xl">FSD WorkSpace</span></span>
-          <p className="mt-2 text-on-teal-mid">Francis Street Digital. Team sign-in.</p>
+        <div className="mb-6 text-on-rail">
+          <h1 className="display text-xl">FSD WorkSpace</h1>
+          <p className="mt-1 text-on-rail-mid">Francis Street Digital. Team sign-in.</p>
         </div>
-        <form className="sheet space-y-4 p-5"
+        <form className="panel space-y-4 border-t-8 border-t-canary p-5"
           onSubmit={async (e) => {
             e.preventDefault()
             setBusy(true)

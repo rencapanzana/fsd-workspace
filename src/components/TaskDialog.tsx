@@ -7,7 +7,8 @@ import { hours, monthName, shortDate, stamp, today } from '../lib/format'
 import { PRIORITIES, ref, STATUSES, statusLabel, TYPES, type TaskType } from '../lib/model'
 import { slackTask } from '../lib/slack'
 import { copyText, StatusMark } from './bits'
-import { Close, Copy, External, Flag, Stop, Timer, Trash } from './Icons'
+import { Box, Close, Copy, External, Stop, Timer, Trash } from './Icons'
+import { SignoffBoxes, useSignoffs } from './Docket'
 
 type Form = Database['public']['Tables']['tasks']['Insert']
 // The database numbers tasks; a loaded task's ref never goes back up.
@@ -85,6 +86,8 @@ export function TaskDialog() {
             <button className={`btn btn-quiet ${task ? '' : 'ml-auto'}`} onClick={() => dlg.current?.close()} aria-label="Close"><Close /></button>
           </header>
 
+          {task && <TaskSignoff task={task} />}
+
           <label className="label mt-4" htmlFor="t-title">Task</label>
           <input id="t-title" className="field text-m font-semibold" value={form.title ?? ''} maxLength={300} required autoFocus={isNew}
             placeholder="What needs doing, in a few words" onChange={(e) => set({ title: e.target.value })} onBlur={saveText('title')} />
@@ -137,13 +140,13 @@ export function TaskDialog() {
             </Field>
           </div>
           <label className="mt-3 flex items-center gap-2">
-            <input type="checkbox" className="size-4 accent-[var(--teal)]" checked={!!form.from_client}
+            <input type="checkbox" className="size-4 accent-[var(--ink)]" checked={!!form.from_client}
               onChange={(e) => (task ? save({ from_client: e.target.checked }) : set({ from_client: e.target.checked }))} />
             Requested by the client
           </label>
 
           <div className="mt-6 flex items-center justify-between gap-2 border-b-2 border-ink pb-1.5">
-            <h3 className="display text-m tracking-[0.06em]">Steps{steps.length > 0 && <span className="meta num ml-2 font-sans normal-case tracking-normal">{steps.filter((s) => s.done).length}/{steps.length}</span>}</h3>
+            <h3 className="text-s font-bold uppercase tracking-[0.14em]">Steps{steps.length > 0 && <span className="meta num ml-2 normal-case tracking-normal">{steps.filter((s) => s.done).length}/{steps.length}</span>}</h3>
             <button className="btn btn-quiet" onClick={() => { if (editNotes) saveText('description')(); setEditNotes(!editNotes) }}>{editNotes ? 'Done editing' : 'Edit notes'}</button>
           </div>
           {editNotes ? (
@@ -155,7 +158,7 @@ export function TaskDialog() {
               {steps.length === 0 && !form.description?.trim() && <p className="meta py-2">No steps. Edit notes to add some.</p>}
               {steps.map((s) => (
                 <label key={s.line} className="flex items-start gap-3 border-b border-rule py-2">
-                  <input type="checkbox" className="mt-0.5 size-4 shrink-0 accent-[var(--teal)]" checked={s.done}
+                  <input type="checkbox" className="mt-0.5 size-4 shrink-0 accent-[var(--ink)]" checked={s.done}
                     onChange={() => { const d = toggle(form.description ?? '', s.line); if (task) save({ description: d }); else set({ description: d }) }} />
                   <span className={s.done ? 'text-mid line-through' : ''}>{s.text}</span>
                 </label>
@@ -195,6 +198,18 @@ export function TaskDialog() {
   )
 }
 
+function TaskSignoff({ task }: { task: Task }) {
+  const { person } = useLookups()
+  const s = useSignoffs([task]).get(task.id)
+  if (!['review', 'approved', 'done'].includes(task.status) && !s?.sent) return null
+  const approved = ['approved', 'done'].includes(task.status) ? person(s?.approved) : ''
+  return (
+    <div className="panel mt-4 border-t-0">
+      <SignoffBoxes built={person(task.assignee_id)} sent={person(s?.sent)} approved={approved} stamped={task.status === 'approved' || task.status === 'done'} />
+    </div>
+  )
+}
+
 function Field({ label, wide, children }: { label: string; wide?: boolean; children: ReactNode }) {
   return <div className={wide ? 'col-span-2' : ''}><span className="label">{label}</span>{children}</div>
 }
@@ -211,21 +226,22 @@ function usePlans(clientId: string) {
 // The next move for this task, as one obvious button.
 function Primary({ task, onSendBack }: { task: Task; onSendBack: () => void }) {
   const { reload } = useData()
-  const [raised, setRaised] = useState(false)
+  const [busy, setBusy] = useState(false)
   const move = async (status: string, done: string) => { if (await run(supabase.from('tasks').update({ status }).eq('id', task.id), done)) reload() }
   if (task.status === 'review')
     return (
       <>
-        <button className="btn btn-ink" disabled={raised} onClick={async () => {
-          setRaised(true)
-          if (await run(supabase.from('tasks').update({ status: 'approved' }).eq('id', task.id), 'Approved. Flag is up.')) { await new Promise((r) => setTimeout(r, 260)); reload() } else setRaised(false)
-        }}><Flag raised={raised} />Approve</button>
+        <button className="btn btn-ink" disabled={busy} onClick={async () => {
+          setBusy(true)
+          if (await run(supabase.from('tasks').update({ status: 'approved' }).eq('id', task.id), 'Approved and stamped')) reload()
+          setBusy(false)
+        }}>Approve</button>
         <button className="btn" onClick={onSendBack}>Send back</button>
       </>
     )
   if (task.status === 'approved') return <button className="btn btn-ink" onClick={() => move('done', 'Marked done')}>Mark done</button>
   if (task.status === 'done') return <button className="btn" onClick={() => move('in_progress', 'Reopened')}>Reopen</button>
-  return <button className="btn btn-ink" onClick={() => move('review', 'Sent for review')}><Flag raised={false} />Send for review</button>
+  return <button className="btn btn-ink" onClick={() => move('review', 'Sent for sign-off')}><Box size={16} />Send for sign-off</button>
 }
 
 function SendBackForm({ task, onDone }: { task: Task; onDone: () => void }) {
@@ -239,7 +255,7 @@ function SendBackForm({ task, onDone }: { task: Task; onDone: () => void }) {
         (await run(supabase.from('tasks').update({ status: 'in_progress' }).eq('id', task.id), 'Sent back with your note'))
       if (ok) { await reload(); onDone() }
     }}>
-      <label className="display text-m tracking-[0.06em]" htmlFor="sendback">What needs to change?</label>
+      <label className="text-s font-bold uppercase tracking-[0.14em]" htmlFor="sendback">What needs to change?</label>
       <textarea id="sendback" className="field mt-2 min-h-24" autoFocus required maxLength={5000} value={note} onChange={(e) => setNote(e.target.value)} />
       <button className="btn btn-ink mt-2" disabled={!note.trim()}>Send back</button>
     </form>

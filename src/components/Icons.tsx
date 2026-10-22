@@ -9,19 +9,11 @@ const Svg = ({ size = 18, children, ...p }: P) => (
   </svg>
 )
 
-// Lowered: an empty pole (waiting for sign-off). Raised: red over yellow (cleared to go live).
-export function Flag({ raised = true, size = 18, className = '' }: { raised?: boolean; size?: number; className?: string }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true" focusable="false"
-      className={`${raised ? '' : 'flag-down'} ${className}`}>
-      <path d="M5 2.5v16" stroke="currentColor" strokeWidth={1.8} strokeLinecap="square" />
-      <g className="flag-cloth">
-        <rect x="6" y="3" width="11" height="4.5" fill="var(--flag-red)" />
-        <rect x="6" y="7.5" width="11" height="4.5" fill="var(--flag-yellow)" />
-      </g>
-    </svg>
-  )
-}
+// Waiting for initials: an empty sign-off box. Approved: the box stamped red.
+export const Box = (p: P) => <Svg {...p}><rect x="3.5" y="3.5" width="13" height="13" /></Svg>
+export const Stamped = (p: P) => (
+  <Svg {...p}><rect x="3" y="3" width="14" height="14" fill="var(--red)" stroke="var(--red)" /><path d="m6.5 10.2 2.4 2.4 4.6-5" stroke="#fff" strokeWidth={2} /></Svg>
+)
 
 export const Hazard = (p: P) => (
   <Svg {...p}><path d="M10 2.5 17.5 10 10 17.5 2.5 10Z" fill="var(--red)" stroke="var(--red)" /><path d="M10 6.5v4.5M10 13.2v.3" stroke="#fff" strokeWidth={2} /></Svg>

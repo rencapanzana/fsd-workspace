@@ -130,7 +130,7 @@ function Bars({ title, rows, total }: { title: string; rows: [string, number][];
       {rows.length === 0 ? <Empty>Nothing yet.</Empty> : rows.map(([name, h]) => (
         <div key={name} className="grid grid-cols-[minmax(0,11rem)_minmax(0,1fr)_4.5rem] items-center gap-3 border-b border-rule py-2">
           <span className="truncate">{name}</span>
-          <span className="h-2 bg-rule"><span className="block h-2 bg-teal" style={{ width: `${(h / top) * 100}%` }} /></span>
+          <span className="h-2 bg-rule"><span className="block h-2 bg-ink" style={{ width: `${(h / top) * 100}%` }} /></span>
           <span className="num text-right font-semibold">{hours(h)}<span className="meta block">{Math.round((h / (total || 1)) * 100)}%</span></span>
         </div>
       ))}

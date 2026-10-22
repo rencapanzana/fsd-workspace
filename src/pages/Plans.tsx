@@ -5,8 +5,8 @@ import { run, useData, useLookups, useScope, useTaskLink, type Task } from '../l
 import type { Json, Tables } from '../lib/database.types'
 import { aud, monthName, monthStart, shortDate, stamp, today } from '../lib/format'
 import { TYPES, typeLabel } from '../lib/model'
-import { Empty, Section, TaskRow } from '../components/bits'
-import { Flag, Plus } from '../components/Icons'
+import { Empty, Section, StatusMark, TaskRow } from '../components/bits'
+import { Plus } from '../components/Icons'
 
 type Plan = Tables<'plans'>
 type Pace = Tables<'plan_pacing'>
@@ -63,7 +63,7 @@ export function Plans() {
           const total = Object.values(budgetsOf(p.budgets)).reduce((a, b) => a + Number(b || 0), 0)
           return (
             <Link key={p.id} to={`/plans/${p.id}`} className="grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-3 border-b border-rule py-2.5 hover:bg-board md:grid-cols-[22px_minmax(0,14rem)_minmax(0,1fr)_auto]">
-              <Flag raised={p.status === 'approved'} />
+              <StatusMark status={p.status === 'draft' ? 'todo' : p.status} />
               <span className="font-semibold">{client ? monthName(p.month) : clients.find((c) => c.id === p.client_id)?.name}</span>
               <span className="meta hidden md:block">{STATUS[p.status]} · {counts.get(p.id) ?? 0} activities</span>
               <span className="num font-semibold">{total ? aud(total) : <span className="meta">No budget set</span>}</span>
@@ -130,13 +130,13 @@ export function PlanPage() {
         <div>
           <Link to={`/c/${client?.slug}/plans`} className="meta hover:underline">{client?.name} plans</Link>
           <h1 className="display text-xl">{monthName(plan.month)}</h1>
-          <p className="meta mt-1 flex items-center gap-2"><Flag raised={plan.status === 'approved'} size={16} />
+          <p className="mt-1 flex items-center gap-2 text-mid"><StatusMark status={plan.status === 'draft' ? 'todo' : plan.status} size={16} />
             {STATUS[plan.status]}{plan.approved_at && ` by ${person(plan.approved_by)} · ${stamp(plan.approved_at)}`}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          {plan.status === 'draft' && <button className="btn btn-ink" onClick={() => update({ status: 'review' }, 'Sent for sign-off')}><Flag raised={false} />Send for sign-off</button>}
-          {plan.status === 'review' && <button className="btn btn-ink" onClick={() => update({ status: 'approved' }, 'Plan approved')}><Flag />Approve plan</button>}
+          {plan.status === 'draft' && <button className="btn btn-ink" onClick={() => update({ status: 'review' }, 'Sent for sign-off')}>Send for sign-off</button>}
+          {plan.status === 'review' && <button className="btn btn-ink" onClick={() => update({ status: 'approved' }, 'Plan approved')}>Approve plan</button>}
           {plan.status !== 'draft' && <button className="btn" onClick={() => update({ status: 'draft' }, 'Back to draft')}>Back to draft</button>}
         </div>
       </header>
@@ -162,7 +162,7 @@ export function PlanPage() {
                     {p?.data_through ? (
                       <>
                         <div className="relative h-2 bg-rule">
-                          <span className="absolute inset-y-0 left-0 bg-teal" style={{ width: `${Math.min(100, budget ? (Number(p.spend_mtd) / budget) * 100 : 0)}%` }} />
+                          <span className="absolute inset-y-0 left-0 bg-ink" style={{ width: `${Math.min(100, budget ? (Number(p.spend_mtd) / budget) * 100 : 0)}%` }} />
                           {budget && projected != null && <span className="absolute -top-1 h-4 w-0.5 bg-ink" style={{ left: `${Math.min(100, (projected / budget) * 100)}%` }} title="Projected month end" />}
                         </div>
                         <p className={`meta num mt-1 ${verdict === 'Over pace' ? 'font-semibold text-red' : ''}`}>
@@ -210,7 +210,7 @@ export function PlanPage() {
                   </p>
                   <div className="mt-1.5 flex gap-0.5" role="img" aria-label={`${n} of ${quota} used`}>
                     {Array.from({ length: Math.max(quota, n) }, (_, i) => (
-                      <span key={i} className={`h-2 flex-1 ${i < Math.min(n, quota) ? 'bg-teal' : i < quota ? 'bg-rule' : 'bg-red'}`} />
+                      <span key={i} className={`h-2 flex-1 ${i < Math.min(n, quota) ? 'bg-ink' : i < quota ? 'bg-rule' : 'bg-red'}`} />
                     ))}
                   </div>
                 </div>

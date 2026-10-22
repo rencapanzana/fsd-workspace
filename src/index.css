@@ -1,94 +1,96 @@
-@import "@fontsource-variable/sofia-sans";
-@import "@fontsource-variable/sofia-sans-extra-condensed";
+@import "@fontsource-variable/work-sans";
 @import "tailwindcss";
 
 /* Only the world's tokens exist: Tailwind's default palette and type scale are switched off on purpose. */
 @theme inline {
   --color-*: initial;
-  --color-teal: var(--teal);
-  --color-teal-deep: var(--teal-deep);
-  --color-on-teal: var(--on-teal);
-  --color-on-teal-mid: var(--on-teal-mid);
   --color-ground: var(--ground);
   --color-board: var(--board);
   --color-ink: var(--ink);
   --color-mid: var(--mid);
   --color-rule: var(--rule);
   --color-red: var(--red);
-  --color-flag-red: var(--flag-red);
-  --color-flag-yellow: var(--flag-yellow);
-  --color-good: var(--good);
+  --color-canary: var(--canary);
+  --color-canary-soft: var(--canary-soft);
+  --color-pink: var(--pink);
+  --color-blue: var(--blue);
   --color-fair: var(--fair);
   --color-bar: var(--bar);
+  --color-rail: var(--rail);
+  --color-rail-deep: var(--rail-deep);
+  --color-on-rail: var(--on-rail);
+  --color-on-rail-mid: var(--on-rail-mid);
   --color-transparent: transparent;
 
-  --font-sans: "Sofia Sans Variable", system-ui, sans-serif;
-  --font-display: "Sofia Sans Extra Condensed Variable", "Sofia Sans Variable", sans-serif;
+  --font-sans: "Work Sans Variable", system-ui, sans-serif;
 
-  /* Three sizes. Rank comes from weight, case and rules, never a fourth size. */
+  /* Four sizes: labels, body, docket numbers, page titles. */
   --text-*: initial;
-  --text-s: 13px;
-  --text-s--line-height: 18px;
-  --text-m: 15px;
-  --text-m--line-height: 21px;
-  --text-xl: 48px;
-  --text-xl--line-height: 42px;
+  --text-s: 12px;
+  --text-s--line-height: 16px;
+  --text-m: 14px;
+  --text-m--line-height: 20px;
+  --text-l: 22px;
+  --text-l--line-height: 26px;
+  --text-xl: 44px;
+  --text-xl--line-height: 48px;
 }
 
 @layer base {
+  /* Carbonless copy stock: white docket, carbon-blue ink, canary for "waiting for initials", pink for "sent back", a red rubber stamp. */
   :root {
     color-scheme: light;
-    --teal: #0f6e78;
-    --teal-deep: #0b5a63;
-    --on-teal: #ffffff;
-    --on-teal-mid: #d2ebee;
-    --ground: #f2f6f7;
+    --ground: #eef0f4;
     --board: #ffffff;
-    --ink: #0f1b22;
-    --mid: #4a5a63;
-    --rule: #d5dee2;
-    --red: #d32019;
-    --flag-red: #e2231a;
-    --flag-yellow: #ffd100;
-    --good: #0f6e78;
-    --fair: #946200;
-    --bar: #a9c9ce;
-    --sel: rgb(15 110 120 / 0.22);
+    --ink: #1f2b5c;
+    --mid: #555d78;
+    --rule: #d3d7e2;
+    --red: #c8322b;
+    --canary: #f3d64b;
+    --canary-soft: #fffbe6;
+    --pink: #ee9aae;
+    --blue: #8fa6dc;
+    --fair: #8a5d00;
+    --bar: #c3c9d9;
+    --rail: #1f2b5c;
+    --rail-deep: #2a3870;
+    --on-rail: #ffffff;
+    --on-rail-mid: #c3cae3;
+    --sel: rgb(243 214 75 / 0.45);
   }
   :root[data-theme='dark'] {
     color-scheme: dark;
-    --teal: #0b4d55;
-    --teal-deep: #083d44;
-    --on-teal-mid: #b9d9dd;
-    --ground: #0a1317;
-    --board: #101c21;
-    --ink: #e3ecef;
-    --mid: #9aaeb6;
-    --rule: #22353c;
+    --ground: #0e1428;
+    --board: #161e36;
+    --ink: #e6e9f5;
+    --mid: #9aa3c2;
+    --rule: #2a3456;
     --red: #ff6b61;
-    --good: #4fc3cf;
+    --canary-soft: #2c2a1a;
     --fair: #e0a92e;
-    --bar: #2f5a62;
-    --sel: rgb(79 195 207 / 0.3);
+    --bar: #34406a;
+    --rail: #10172e;
+    --rail-deep: #1c2650;
+    --sel: rgb(243 214 75 / 0.3);
   }
 
   html {
     background: var(--ground);
     color: var(--ink);
     font-family: var(--font-sans);
-    font-size: 15px;
-    line-height: 21px;
+    font-size: 14px;
+    line-height: 20px;
     -webkit-font-smoothing: antialiased;
     scrollbar-width: thin;
-    scrollbar-color: var(--rule) transparent;
+    scrollbar-color: var(--bar) transparent;
   }
   ::selection { background: var(--sel); }
   :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-  input, textarea, select { caret-color: var(--teal); font: inherit; color: inherit; }
+  input, textarea, select { caret-color: var(--red); font: inherit; color: inherit; }
   button { cursor: pointer; font: inherit; color: inherit; }
   a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; }
   dialog { color: inherit; }
-  dialog::backdrop { background: rgb(10 19 23 / 0.55); }
+  dialog::backdrop { background: rgb(14 20 40 / 0.55); }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition: none !important; animation: none !important; }
@@ -96,53 +98,59 @@
 }
 
 @layer components {
-  .display { font-family: var(--font-display); font-weight: 800; text-transform: uppercase; letter-spacing: 0.01em; }
+  .display { font-weight: 800; letter-spacing: -0.02em; }
 
-  /* Section heading: condensed caps over a 2px ink rule. More space above than below. */
+  /* Section label: small tracked caps, count on the right. The panel or cards below carry the structure. */
   .h-sec {
-    display: flex; align-items: center; gap: 8px; margin: 32px 0 0; padding-bottom: 6px;
-    border-bottom: 2px solid var(--ink);
-    font-family: var(--font-display); font-weight: 800; font-size: 15px; line-height: 21px;
-    text-transform: uppercase; letter-spacing: 0.06em;
+    display: flex; align-items: center; gap: 8px; margin: 32px 0 10px;
+    font-size: 12px; line-height: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em;
   }
-  .h-sec .count { margin-left: auto; font-family: var(--font-sans); font-weight: 600; font-size: 13px; letter-spacing: 0; color: var(--mid); }
+  .h-sec .count { margin-left: auto; font-variant-numeric: tabular-nums; }
+  .label-caps { font-size: 11px; line-height: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--mid); }
+
+  .panel { background: var(--board); border: 1px solid var(--rule); }
 
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    min-height: 32px; padding: 0 12px; border: 1px solid var(--rule); border-radius: 2px;
+    min-height: 32px; padding: 0 12px; border: 1px solid var(--rule);
     background: var(--board); color: var(--ink); font-weight: 600; white-space: nowrap;
     transition: background-color 120ms ease-out, border-color 120ms ease-out, color 120ms ease-out;
   }
   .btn:hover { border-color: var(--ink); }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .btn-ink { background: var(--ink); border-color: var(--ink); color: var(--board); }
-  .btn-ink:hover { background: var(--teal); border-color: var(--teal); color: var(--on-teal); }
+  .btn-ink:hover { background: var(--rail-deep); border-color: var(--rail-deep); color: #fff; }
+  .btn-stamp { background: var(--red); border-color: var(--red); color: #fff; }
+  .btn-stamp:hover { filter: brightness(0.92); border-color: var(--red); }
   .btn-quiet { border-color: transparent; background: transparent; }
   .btn-quiet:hover { border-color: var(--rule); }
   .btn-danger { color: var(--red); }
 
   .field {
-    width: 100%; min-height: 34px; padding: 0 10px; border: 1px solid var(--rule); border-radius: 2px;
+    width: 100%; min-height: 34px; padding: 0 10px; border: 1px solid var(--rule);
     background: var(--board); color: var(--ink);
   }
   textarea.field { padding: 8px 10px; resize: vertical; }
-  .field:focus { outline: 2px solid var(--teal); outline-offset: -1px; border-color: var(--teal); }
+  .field:focus { outline: 2px solid var(--ink); outline-offset: -1px; border-color: var(--ink); }
   .field::placeholder { color: var(--mid); opacity: 1; }
-  .label { display: block; margin-bottom: 4px; font-size: 13px; line-height: 18px; color: var(--mid); }
+  .label { display: block; margin-bottom: 4px; font-size: 12px; line-height: 16px; color: var(--mid); }
 
-  .meta { font-size: 13px; line-height: 18px; color: var(--mid); }
-  .chip { display: inline-block; padding: 0 6px; border: 1px solid var(--rule); border-radius: 2px; font-size: 13px; line-height: 18px; white-space: nowrap; }
+  .meta { font-size: 12px; line-height: 16px; color: var(--mid); }
+  .chip { display: inline-block; padding: 0 6px; border: 1px solid var(--rule); font-size: 12px; line-height: 18px; white-space: nowrap; }
   .num { font-variant-numeric: tabular-nums; }
   .ref { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .sheet { background: var(--board); border: 1px solid var(--rule); }
 
-  /* Data table: hairline rows, tabular figures, right-aligned numbers. */
-  .table { width: 100%; border-collapse: collapse; }
-  .table th { text-align: left; font-size: 13px; line-height: 18px; font-weight: 600; color: var(--mid); padding: 8px 8px 6px; border-bottom: 1px solid var(--rule); }
-  .table td { padding: 9px 8px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  .table { width: 100%; border-collapse: collapse; background: var(--board); }
+  .table th { text-align: left; font-size: 11px; line-height: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--mid); padding: 10px 12px 8px; border-bottom: 1px solid var(--rule); }
+  .table td { padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
   .table .r { text-align: right; font-variant-numeric: tabular-nums; }
 
-  /* The patrol flag: red over yellow on a pole. Lowered = waiting for sign-off; raised = cleared to go live. */
-  .flag-cloth { transform: translateY(var(--drop, 0)); opacity: 1; transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), opacity 120ms ease-out; }
-  .flag-down .flag-cloth { --drop: 9px; opacity: 0; }
+  /* The rubber stamp. It lands with a small press when a docket is approved. */
+  .stamp {
+    display: inline-block; padding: 1px 6px; border: 2px solid var(--red); color: var(--red);
+    font-weight: 800; font-size: 11px; line-height: 14px; letter-spacing: 0.12em; text-transform: uppercase;
+    transform: rotate(-4deg); white-space: nowrap;
+  }
+  .stamp-press { animation: stamp-press 220ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+  @keyframes stamp-press { from { opacity: 0; transform: rotate(-4deg) scale(1.6); } to { opacity: 1; transform: rotate(-4deg) scale(1); } }
 }
